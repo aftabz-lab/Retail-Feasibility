@@ -108,7 +108,23 @@ export class WorkbookEngine {
 export const INFO_FIELDS = [
  ['C3','Project name','text'],['C5','SFT','number'],['C6','Ground floor','text'],['C7','Per SFT rent','number'],['C8','Total rent','number'],['C9','Rent with VAT','number'],['C10','Security','number'],['C11','Advance','number'],['C12','Fixed asset investment','number'],['C13','Total investment','number'],['C14','Sales per day','number'],['C15','Month sales','number'],['C16','GP%','percent'],['C17','Basket size','number'],['C18','Comparing outlet name','text'],['C19','Other income %','percent'],['C20','Business agreement year','number'],['C21','Rent increase %','percent'],['C22','Rent increase after (years later)','number']
 ];
-export function makeDefaultState() {return {schemaVersion:1,sheets:copy(WORKBOOK_RULES),overrides:{},categories:[],activeCategory:'Default',uploadSources:{location:'Default',Investment:'Default'},project:{district:'',googleMapLocation:WORKBOOK_RULES.location.cells.C5.v,existingOutlets:0,includeExistingOutlets:true,salesGivenBy:'Mr. Mamun',openedBy:'Mr. Abu Sayem Mohammad Al Azad',openedDesignation:'Head Of Business Expansion'},signatories:[],signatureUploads:[],locationAssessment:null,locationStatus:'Enter Google Map Location and select District to calculate the 1 KM count.'};}
+export const EXPENSE_INPUTS=['B22','B24','B26','B28','B30','B33','B37','B39','B40'];
+export const BLANK_INFO_INPUTS=['C3','C5','C6','C7','C10','C11','C12','C14','C17','C18','C19','C20','C21','C22'];
+export function makeDefaultState() {
+ const state={schemaVersion:2,sheets:copy(WORKBOOK_RULES),overrides:{},categories:[],activeCategory:'Default',uploadSources:{location:'',Investment:''},project:{district:'',googleMapLocation:'',existingOutlets:null,includeExistingOutlets:true,salesGivenBy:'',openedBy:'',openedDesignation:'',storeType:''},manpowerMode:'manual',signatories:[],signatureUploads:[],locationAssessment:null,locationStatus:'Enter Google Map Location and select District to calculate the 1 KM count.'};
+ for(const a of BLANK_INFO_INPUTS)state.overrides[cellKey('INFORMATION',a)]=null;
+ for(let r=6;r<=20;r++)for(const c of ['F','G'])state.overrides[cellKey('INFORMATION',c+r)]=null;
+ for(const a of EXPENSE_INPUTS)if(!WORKBOOK_RULES[' Monthly PNL'].cells[a]?.f)state.overrides[cellKey(' Monthly PNL',a)]=null;
+ state.overrides[cellKey('Yearly -5yrs PNL','B66')]=null;
+ state.sheets.INFORMATION.cells.F22.f='SUM(F6:F20)';
+ return state;
+}
+
+export function formulaDependencies(sheets,sheet,address){
+ const formula=sheets[sheet]?.cells[address]?.f;if(!formula)return [];
+ const result=[];function walk(node){if(node.type==='ref'){const target=node.sheet??sheet;if(!node.end)result.push(cellKey(target,node.address));else{const[a,b]=addressParts(node.address),[c,d]=addressParts(node.end);for(let r=b;r<=d;r++)for(let col=a;col<=c;col++)result.push(cellKey(target,columnName(col)+r));}}else if(node.type==='call')node.args.forEach(walk);else if(node.type==='binary'){walk(node.left);walk(node.right);}else if(node.type==='unary')walk(node.child);}
+ walk(parse(formula));return result;
+}
 
 export function formatCell(value,format='General',digits) {
   if(value==null||value==='')return '';
@@ -142,3 +158,4 @@ export function normalizeCategory(source) {
 }
 export function setCategory(state,id) {const version=id==='Default'?WORKBOOK_RULES.category:state.categories.find(c=>c.id===id)?.sheet;if(!version)throw Error('Category version not found');state.sheets.category=copy(version);state.activeCategory=id;state.sheets.INFORMATION.cells.C16.f=`category!D${version.rows}`;delete state.overrides[cellKey('INFORMATION','C16')];for(const k of Object.keys(state.overrides))if(k.startsWith('category!'))delete state.overrides[k];}
 export { WORKBOOK_RULES, SHEET_ORDER };
+

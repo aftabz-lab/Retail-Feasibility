@@ -17,9 +17,9 @@ There is no installation or build step. Open the published website to use the da
 
 Official reference: [GitHub Pages publishing source](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site).
 
-## 2. Start with the supplied defaults
+## 2. Start with a blank form
 
-The default model is the supplied Dhanmondi ABC Tower workbook. You can use the dashboard before uploading anything. The six workbook schedules are embedded in the repository, so you do not need to keep an Excel file or a data folder there.
+New forms start with blank project, financial, location and manpower inputs. Upload the respective Location and Investment schedules, or enter values manually. The six workbook schedules and formulas remain embedded in the repository. Default category rules and the existing signature settings remain available.
 
 The sections appear in this order: **Data entry → Information → Monthly PNL → Yearly -5yrs PNL → category → location → Investment**.
 
@@ -44,7 +44,7 @@ The Information rules are:
 
 The source uses row 3 for column headings, row 5 for the first outlet, rows 5–8 for area entries, and F9 for total SFT. Google Map Location is copied from location!C5. Select the district to run the nearby-outlet check.
 
-Ground floor, sales per day, basket size, comparing outlet name, other income %, business agreement years, and rent-increase inputs remain manual as in the Information sheet. The upload does not invent formulas for source cells that were blank or hardcoded.
+When present, the location schedule also fills Ground floor from E5, business agreement years from D5, and the rent-enhancement percentage and period from K5. Sales per day, basket size, comparing outlet name and other income can be entered manually. If the uploaded workbook includes the Information sheet, its populated manual input cells fill those fields too. All fields remain editable.
 
 ## 4. Upload Investment File
 
@@ -79,7 +79,7 @@ Versions and project inputs are saved **in the same browser for the same dashboa
 
 Click any Data entry field to change it. Percent fields use percentage points: enter **17.3** for 17.3%, and **6** for 6%.
 
-For a calculated field, entering a value creates a manual override. Click **Use sheet rule** to return that field to its original formula. Clearing a numeric entry restores its sheet value or formula. A typed zero is retained as zero.
+For a calculated field, entering a value creates a manual override. Click **Use sheet rule** to return that field to its original formula. Clearing a numeric entry leaves it blank. A typed zero is retained as zero. Changing an upstream input restores dependent calculated totals to the sheet rules.
 
 You can edit manpower quantities and salary rates. Each role's total remains quantity × salary. Additional expense inputs and WACC are available below the manpower panel.
 
@@ -87,14 +87,28 @@ The dashboard preserves the workbook's original conventions:
 
 - Information month sales = daily sales × 30. Monthly PNL sales = daily sales × 365 ÷ 12.
 - Total investment in Information = fixed assets + advance. The five-year model's initial investment also includes security, as in the source.
-- Information F22 sums manpower rows 6–18. Security and Cleaner remain separate rows outside that source subtotal. The subtotal is not changed to a new range.
+- Information F22 now sums all fifteen manpower roles, F6:F20, to match the supplied store-type matrix: Super Store 39, Mega Store 79, PNP Convenience Store 25.
 - Rent-increase inputs C21/C22 are recorded in Information. The original five-year rent formulas hardcode the 10% steps in years 3 and 5, rather than referencing those inputs. Those formulas are preserved.
 - Yearly H54 uses the original `H51--H53` formula. It is preserved exactly rather than corrected during the dashboard build.
 - The source's NPV, IRR, ROI, and payback formulas are retained.
 
 If the inputs make IRR unavailable or a formula divides by zero, the original Excel error is shown in the model and retained in exports. It is not converted to zero. Structural errors such as a missing sheet or unsupported formula must be fixed before export.
 
-**Restore default inputs** restores the supplied model and default signature selections. Uploaded category versions and uploaded signature images remain available for selection.
+**Clear inputs** opens a blank form with the original signature selections. Uploaded category versions and uploaded signature images remain available. Existing saved inputs are retained on reload; old implicit sample defaults are removed during the update.
+
+### Store-type manpower
+
+Use **Select Store Type** to apply Super Store, Mega Store, or PNP Convenience Store quantities from the supplied matrix. Existing salary rates are used, and known manually entered salary rates are retained when switching store types. Editing any quantity or salary switches the table to Manual. **Use automatic manpower** reapplies the selected profile. The complete matrix is available below the table.
+
+### Auto feasibility control
+
+The badge is GREEN when every Monthly PNL row 43 value is positive: all twelve months and their annual total. Missing inputs and zero or negative profit keep it RED. No other profit, NPV or IRR condition is added to this control.
+
+**Auto Correct** increases only **Sales per day** to the smallest qualifying multiple of Tk 1,000 at or above the current entered sales. Rent, advance, investment, salaries, GP and other cost inputs are retained. It does not change inputs if required row 43 data is missing or if sales growth cannot make the row positive. The up/down buttons and keyboard arrows change Sales per day by exactly Tk 1,000 per click or press, with zero as the lower limit.
+
+Location/Investment uploads populate the mapped fields. If an uploaded workbook also contains Information, Monthly PNL and Yearly -5yrs PNL, their manual input cells populate the corresponding fields as well. Standalone schedules populate only their associated fields. Remaining fields can be entered manually, including explicit zero expense values.
+
+The rules Excel includes the selected store type, Automatic/Manual mode, formula-linked quantities, and a hidden Manpower Rules matrix. The PDF remains three pages and retains its existing signature rules.
 
 ## 7. Existing Outlet No. within 1 KM
 
@@ -164,9 +178,10 @@ The Excel download represents the active model. Use the project backup to keep *
 - Missing signature: confirm that the `signs` folder and its manifest were uploaded. Select an image and enable the relevant checkbox.
 - PDF font error: upload the complete `fonts` folder.
 - Location not resolved: select District, check the link, and use Recheck map. Try raw coordinates if an external service is unavailable.
-- Old browser data: restore the required project backup, or use Restore default inputs when you want the supplied baseline.
+- Old browser data: restore the required project backup, or use Clear inputs when you want a blank form.
 - Upload rejected: keep the original Location/Investment layout or the Category columns described above. A rejected upload does not replace the active project.
 
 ## Validation completed
 
 All 1,189 baseline formulas matched the source workbook's saved results. Changed uploads, category versions, signature links, map parsing and distance rules, formula exports, and both PDF modes were checked. The signed PDF was rendered and inspected for all three pages. Interactive browser testing and live external map-service checks were not available in the build environment.
+

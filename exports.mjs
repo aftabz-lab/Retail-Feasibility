@@ -1,5 +1,6 @@
-import {SHEET_ORDER,INFO_FIELDS,cellKey,formatCell,columnName,addressParts} from './calculation.mjs';
+import {SHEET_ORDER,INFO_FIELDS,cellKey,formatCell,columnName,addressParts} from './calculation.mjs?v=retail-v2-20261015';
 import {resolveSignatories} from './approval-rules.mjs';
+import {STORE_TYPES,MANPOWER_RULES,displayCellValue} from './controls.mjs?v=retail-v2-20261015';
 
 export function safeFilename(value){return String(value||'Project').replace(/[^A-Za-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,65)||'Project';}
 export function downloadBlob(blob,name){const url=URL.createObjectURL(blob),link=document.createElement('a');link.href=url;link.download=name;document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),2000);}
@@ -29,6 +30,10 @@ export async function buildRulesExcel(state,engine,assets){
    sheet.headerFooter={oddHeader:'&C&B Retail Feasibility',oddFooter:'&L Shwapno &R Page &P of &N'};
  }
  const info=workbook.getWorksheet('INFORMATION');info.getColumn('B').width=38;info.getColumn('C').width=28;info.getColumn('E').width=29;['F','G','H'].forEach(c=>info.getColumn(c).width=c==='F'?10:18);info.getRow(3).height=50;info.getRow(22).height=36;
+ const staffing=workbook.addWorksheet('Manpower Rules',{state:'hidden'});staffing.addRow(['Manpower Retail Feasibility']);staffing.addRow([]);staffing.addRow(['Role',...STORE_TYPES]);MANPOWER_RULES.forEach(row=>staffing.addRow(row));staffing.addRow(['Total',...STORE_TYPES.map((_,i)=>MANPOWER_RULES.reduce((sum,r)=>sum+r[i+1],0))]);
+ info.getCell('E24').value='Select Store Type';info.getCell('F24').value=state.project.storeType||'';info.getCell('F24').dataValidation={type:'list',allowBlank:true,formulae:['"'+STORE_TYPES.join(',')+'"']};info.getCell('E25').value='Manpower mode';info.getCell('F25').value=state.manpowerMode==='automatic'?'Automatic':'Manual';info.getCell('F25').dataValidation={type:'list',allowBlank:false,formulae:['"Automatic,Manual"']};
+ info.mergeCells('F24:H24');info.mergeCells('F25:H25');info.getRow(24).height=30;info.getCell('F24').alignment={wrapText:true,vertical:'middle'};
+ for(let r=6;r<=20;r++){const value=engine.value('INFORMATION','F'+r),fallback=typeof value==='number'?String(value):'""',matrixRow=r-2;info.getCell('F'+r).value={formula:`IF($F$25="Automatic",IF($F$24="Super Store",'Manpower Rules'!B${matrixRow},IF($F$24="Mega Store",'Manpower Rules'!C${matrixRow},IF($F$24="PNP Convenience Store",'Manpower Rules'!D${matrixRow},""))),${fallback})`,result:value??''};}
  const monthly=workbook.getWorksheet(' Monthly PNL');monthly.getColumn('A').width=39;for(let c=2;c<=14;c++)monthly.getColumn(c).width=18;monthly.getRow(2).height=48;
  const yearly=workbook.getWorksheet('Yearly -5yrs PNL');yearly.getColumn('A').width=43;for(let c=2;c<=13;c++)yearly.getColumn(c).width=20;yearly.getRow(10).height=48;
  const budget=workbook.getWorksheet('Investment');budget.getColumn('A').width=25;budget.getColumn('B').width=70;for(let c=3;c<=7;c++)budget.getColumn(c).width=18;
@@ -58,7 +63,7 @@ function signatureBlocks(doc,people,images,y){const pageWidth=doc.internal.pageS
 export async function buildPdf(state,engine,assets,{management=false}={}){
  const JsPDF=globalThis.jspdf?.jsPDF;if(!JsPDF)throw Error('PDF library did not load. Reload the page.');
  const doc=new JsPDF({unit:'pt',format:'a4',orientation:'portrait',compress:true});const fonts=await loadPdfFonts();doc.addFileToVFS('RetailSans.ttf',fonts.normal);doc.addFont('RetailSans.ttf','RetailSans','normal');doc.addFileToVFS('RetailSansBold.ttf',fonts.bold);doc.addFont('RetailSansBold.ttf','RetailSans','bold');doc.setFont('RetailSans','normal');const people=resolveSignatories(state),enabledIds=new Set(people.filter(p=>p.includeInPdf).map(p=>p.signatureId));const images=management?new Map():await imageAssets(assets.filter(a=>enabledIds.has(a.id)));
- const project=String(engine.value('INFORMATION','C3'));doc.setProperties({title:'Retail Feasibility - '+project,author:'Shwapno',subject:management?'Management feasibility':'Retail feasibility with approvals'});
+ const project=String(displayCellValue(state,engine,'INFORMATION','C3')??'');doc.setProperties({title:'Retail Feasibility - '+project,author:'Shwapno',subject:management?'Management feasibility':'Retail feasibility with approvals'});
  // Page 1: Information and manpower only.
  header(doc,'Information',project,1);let y=80;
  const leftX=28,leftWidths=[169,107],rightX=318,rightWidths=[114,30,48,57];
@@ -66,7 +71,7 @@ export async function buildPdf(state,engine,assets,{management=false}={}){
  for(const [a,label]of INFO_FIELDS){const source=state.sheets.INFORMATION.cells[a],v=!source&&!Object.hasOwn(state.overrides,cellKey('INFORMATION',a))?'':engine.value('INFORMATION',a),text=pdfNumber(v,source?.z);const lines=Math.max(doc.splitTextToSize(clean(label),leftWidths[0]-6).length,doc.splitTextToSize(clean(text),leftWidths[1]-6).length);const height=Math.max(22,lines*9+9);leftY=tableRow(doc,[label,text],leftX,leftY,leftWidths,height,{size:8,aligns:['left',typeof v==='number'?'right':'left'],maxLines:6});}
  tableRow(doc,['MANPOWER','Qty','Salary','Total'],rightX,y,rightWidths,25,{size:8,bold:true,maxLines:2});let rightY=y+25;
  for(let r=6;r<=20;r++){rightY=tableRow(doc,[state.sheets.INFORMATION.cells['E'+r]?.v,...['F','G','H'].map(c=>pdfNumber(engine.value('INFORMATION',c+r)))],rightX,rightY,rightWidths,22,{size:8,aligns:['left','right','right','right']});}
- rightY=tableRow(doc,['Workbook subtotal',pdfNumber(engine.value('INFORMATION','F22')),'',''],rightX,rightY,rightWidths,24,{size:8,bold:true,aligns:['left','right','right','right']});
+ rightY=tableRow(doc,['Total manpower',pdfNumber(displayCellValue(state,engine,'INFORMATION','F22')),'',''],rightX,rightY,rightWidths,24,{size:8,bold:true,aligns:['left','right','right','right']});
  if(state.project.includeExistingOutlets){let nearbyY=Math.max(leftY,rightY)+22;drawText(doc,'Existing Outlet No. within 1 KM: '+(state.project.existingOutlets??'Pending map check'),28,nearbyY,539,{size:8,bold:true});drawText(doc,'District: '+state.project.district,28,nearbyY+15,539,{size:8});drawText(doc,'Google Map Location: '+state.project.googleMapLocation,28,nearbyY+30,539,{size:7,lines:4});}
  if(!management)reviewSignature(doc,people,images);
  // Page 2: Monthly PNL, including the original annual and cost calculations.
@@ -87,3 +92,4 @@ export async function buildPdf(state,engine,assets,{management=false}={}){
  if(!management){yearY+=16;drawText(doc,'APPROVAL & SIGNATURES',28,yearY,539,{size:8,bold:true,align:'center'});signatureBlocks(doc,people,images,yearY+10);}
  if(doc.getNumberOfPages()!==3)throw Error('PDF must contain exactly three pages.');return doc;
 }
+

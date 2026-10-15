@@ -16,6 +16,10 @@ Read [GUIDE.md](GUIDE.md) for upload formats, manual entry, category history, si
 
 GitHub's setup instructions: [Configuring a publishing source](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site).
 
+## Current update
+
+Fresh project and manpower inputs start blank. Source uploads populate associated fields. Select Store Type applies the supplied 39/79/25 manpower matrix, with manual editing available. The row 43 control checks all monthly and annual values. Auto Correct changes Sales per day only, using multiples of 1,000. Sales arrows change the entered value by 1,000.
+
 ## Included behavior
 
 - Sections: Data entry, Information, Monthly PNL, Yearly -5yrs PNL, category, location, Investment.
@@ -34,10 +38,11 @@ GitHub's setup instructions: [Configuring a publishing source](https://docs.gith
 
 Manual edits override the corresponding cell. Formula inputs offer **Use sheet rule** to remove a manual override. Location or Investment uploads reset the mapped information overrides and their immediate totals so the newly uploaded file can populate them. Category selection restores the category-based GP formula.
 
-Existing formulas are preserved even where the source has unusual behavior. Examples include the Information manpower subtotal range, the five-year rent step-ups, and the five-year total after financing-cost formula. These are described in the guide.
+The store-type update changes Information F22 to sum F6:F20, matching the supplied manpower matrix. Other financial formulas, including the five-year rent step-ups and total after financing-cost formula, remain unchanged.
 
 ## Verification
 
 All 1,189 baseline formula results were compared against the original workbook's cached results and matched. Automated checks covered source uploads with changed filenames, linked calculations, manual zero values, category version switching and extra category rows, signature links, coordinate parsing, district filtering, distance calculations, both PDF modes, and formula-preserving Excel exports. The three signed PDF pages were rendered and visually inspected.
 
 Interactive browser QA and live external map-service calls were unavailable in the build environment. The original resolver URL and map parsing/counting rules are retained. The guide explains retry and manual-entry options.
+

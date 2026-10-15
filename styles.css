@@ -285,3 +285,22 @@ details { margin-top: 7px; border: 1px solid #315069; border-radius: 9px; backgr
 @media (max-width:1250px) { .retail-metrics { grid-template-columns:repeat(3,minmax(0,1fr)); } .topbar { flex-wrap:wrap; } }
 @media (max-width:900px) { .entry-layout { grid-template-columns:1fr; } .signatory-grid { grid-template-columns:1fr; } .signature-preview-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } .source-strip>strong { max-width:100%; } }
 @media (max-width:560px) { .retail-metrics { grid-template-columns:repeat(2,minmax(0,1fr)); padding:14px 14px 0; } .field-grid.two,.field-grid.three { grid-template-columns:1fr; } .export-size { width:100%; min-width:0; } .upload-toolbar { display:grid; grid-template-columns:1fr; } .topbar .top-actions { display:grid; width:100%; } .entry-panel { padding:16px; } }
+
+.header-auto-feasibility { display:grid; gap:5px; padding:7px 9px; border:1px solid #294a63; border-radius:12px; background:#0b1e2c; }
+.header-auto-feasibility-label { color:#c7ddea; font-size:11px; font-weight:800; }
+.auto-feas-control { display:flex; gap:10px; align-items:center; }
+.auto-feas-dot { display:inline-flex; align-items:center; justify-content:center; min-width:65px; height:31px; border-radius:20px; font-size:12px; font-weight:800; color:white; }
+.auto-feas-dot.red { background:#dd2424; }.auto-feas-dot.green { background:#14874b; }
+.header-auto-feasibility .btn { min-height:37px; padding:0 15px; font-size:14px; }
+.sales-step-control { display:flex; align-items:stretch; min-width:0; }
+.sales-step-control input { border-radius:9px 0 0 9px; appearance:textfield; -moz-appearance:textfield; }
+.sales-step-control input::-webkit-inner-spin-button,.sales-step-control input::-webkit-outer-spin-button { -webkit-appearance:none; margin:0; }
+.sales-step-buttons { display:grid; width:35px; flex:0 0 35px; }
+.sales-step-buttons button { background:#15364d; color:#cce9fa; border:1px solid #32526a; padding:0; font-size:10px; }
+.sales-step-buttons button:first-child { border-radius:0 8px 0 0; }.sales-step-buttons button:last-child { border-radius:0 0 8px 0; }
+.manpower-controls { display:flex; flex-wrap:wrap; align-items:end; gap:16px; margin-bottom:18px; }
+.manpower-controls .field { flex:1 1 220px; }.manpower-mode { color:#add3e8; display:grid; gap:7px; font-size:12px; padding-bottom:8px; }
+.manpower-rules { margin-top:16px; color:#b5d0df; font-size:12px; }.manpower-rules summary { cursor:pointer; padding:8px 0; }
+.workbook-grid .profit-green { color:#cef5d7; background:#164f35; font-weight:800; }
+.workbook-grid .profit-red { color:#ffd4d4; background:#662d32; font-weight:800; }
+.workbook-grid .profit-pending { color:#819caf; background:#142d3c; }
