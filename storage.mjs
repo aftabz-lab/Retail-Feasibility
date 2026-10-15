@@ -1,0 +1,6 @@
+const databaseName = 'RetailFeasibility:'+ (globalThis.location?.pathname || '/');
+export function openStore() {
+ return new Promise((resolve,reject)=>{if(!globalThis.indexedDB){reject(Error('Browser storage is unavailable. Use Backup project to keep your work.'));return;}const request=indexedDB.open(databaseName,1);request.onupgradeneeded=()=>request.result.createObjectStore('project');request.onerror=()=>reject(request.error);request.onblocked=()=>reject(Error('Close older dashboard tabs, then reload to enable saving.'));request.onsuccess=()=>resolve(request.result);});
+}
+export async function readSaved() {const db=await openStore();return new Promise((resolve,reject)=>{const tx=db.transaction('project','readonly');const req=tx.objectStore('project').get('current');req.onsuccess=()=>resolve(req.result||null);req.onerror=()=>reject(req.error);tx.oncomplete=()=>db.close();});}
+export async function saveProject(state) {const db=await openStore();return new Promise((resolve,reject)=>{const tx=db.transaction('project','readwrite');tx.objectStore('project').put(state,'current');tx.oncomplete=()=>{db.close();resolve();};tx.onerror=()=>{db.close();reject(tx.error||Error('Could not save the project.'));};tx.onabort=()=>reject(tx.error||Error('Saving was interrupted.'));});}

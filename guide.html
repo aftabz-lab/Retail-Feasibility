@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Retail Feasibility — Guide</title><style>
+*{box-sizing:border-box}body{margin:0;background:#f3f6f9;color:#182c3a;font:16px/1.7 system-ui,-apple-system,Segoe UI,sans-serif}.bar{background:#102534;color:white;padding:16px 28px;position:sticky;top:0}.bar a{color:#d5efff;text-decoration:none;font-weight:650}main{max-width:1100px;margin:26px auto;padding:32px 44px;background:white;border:1px solid #d6e1e8;border-radius:14px}h1{font-size:29px;line-height:1.3}h2{margin:38px 0 14px;font-size:22px;border-bottom:1px solid #dae5ec;padding-bottom:8px}h3{font-size:18px;margin-top:24px}table{border-collapse:collapse;width:100%;display:block;overflow:auto;margin:20px 0;font-size:14px}th,td{padding:10px 12px;border:1px solid #ccdce5;text-align:left;min-width:110px}th{background:#eaf1f6}code{font-size:.9em;background:#eef3f7;padding:2px 5px;border-radius:3px}a{color:#086299}li{margin:8px 0}p{margin:14px 0}@media(max-width:600px){main{margin:0;padding:20px;border:0;border-radius:0}h1{font-size:25px}.bar{padding:13px 20px}}@media print{.bar{display:none}body{background:white}main{border:0;padding:0;margin:0}table{display:table;font-size:10px}h2{break-after:avoid}tr{break-inside:avoid}}
+</style></head><body><div class="bar"><a href="./index.html">← Open Retail Feasibility</a></div><main><h1>Retail Feasibility — setup and user guide</h1>
+<h2>1. Put the dashboard on GitHub</h2>
+<ol>
+<li>Sign in to GitHub and select <strong>New repository</strong>.</li>
+<li>Use <strong>Retail-Feasibility</strong> for the repository name. The displayed dashboard name remains <strong>Retail Feasibility</strong>.</li>
+<li>Create the repository.</li>
+<li>Extract <code>Retail-Feasibility.zip</code> on your computer.</li>
+<li>In the repository, choose <strong>Add file → Upload files</strong>. Drag all extracted files and folders into the upload area. Keep the <code>vendor</code>, <code>signs</code>, and <code>fonts</code> folders together with the root files.</li>
+<li>Commit the files to <code>main</code>. Confirm that <code>index.html</code> is directly in the repository root, rather than inside another Retail-Feasibility folder.</li>
+<li>Open <strong>Settings → Pages</strong>.</li>
+<li>Under <strong>Build and deployment</strong>, choose <strong>Deploy from a branch</strong>.</li>
+<li>Choose <strong>main</strong> and <strong>/(root)</strong>, then click <strong>Save</strong>.</li>
+<li>Wait for GitHub&#39;s deployment to finish. Open the site link shown on the Pages screen.</li>
+</ol>
+<p>There is no installation or build step. Open the published website to use the dashboard. Double-clicking the HTML file on a device does not provide the web environment required by JavaScript modules and browser saving.</p>
+<p>Official reference: <a href="https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site">GitHub Pages publishing source</a>.</p>
+<h2>2. Start with the supplied defaults</h2>
+<p>The default model is the supplied Dhanmondi ABC Tower workbook. You can use the dashboard before uploading anything. The six workbook schedules are embedded in the repository, so you do not need to keep an Excel file or a data folder there.</p>
+<p>The sections appear in this order: <strong>Data entry → Information → Monthly PNL → Yearly -5yrs PNL → category → location → Investment</strong>.</p>
+<p>Data entry contains all the screenshot&#39;s project, rent, investment, sales, GP, basket, agreement, rent-increase, and manpower fields. It also contains district, Google Map Location, the existing-outlet count, Sales Given By, Opened by, and the signature manager.</p>
+<h2>3. Upload Location File</h2>
+<p>The filename can be anything. Upload either a workbook containing the location tab, or a file containing just that schedule. Keep the original column positions and row layout. If there is no tab named <code>location</code>, the application looks for the matching location headers.</p>
+<p>The Information rules are:</p>
+<table>
+<thead>
+<tr>
+<th>Information field</th>
+<th>Information cell</th>
+<th>Source rule</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Project name</td>
+<td>C3</td>
+<td>location!B5</td>
+</tr>
+<tr>
+<td>SFT</td>
+<td>C5</td>
+<td>location!F9</td>
+</tr>
+<tr>
+<td>Per SFT rent</td>
+<td>C7</td>
+<td>location!G5</td>
+</tr>
+<tr>
+<td>Total rent</td>
+<td>C8</td>
+<td>C7 × C5</td>
+</tr>
+<tr>
+<td>Rent with VAT</td>
+<td>C9</td>
+<td>C8 × 115%</td>
+</tr>
+<tr>
+<td>Security</td>
+<td>C10</td>
+<td>location!N5</td>
+</tr>
+<tr>
+<td>Advance</td>
+<td>C11</td>
+<td>location!M5</td>
+</tr>
+<tr>
+<td>Total investment</td>
+<td>C13</td>
+<td>Fixed asset investment + Advance</td>
+</tr>
+</tbody></table>
+<p>The source uses row 3 for column headings, row 5 for the first outlet, rows 5–8 for area entries, and F9 for total SFT. Google Map Location is copied from location!C5. Select the district to run the nearby-outlet check.</p>
+<p>Ground floor, sales per day, basket size, comparing outlet name, other income %, business agreement years, and rent-increase inputs remain manual as in the Information sheet. The upload does not invent formulas for source cells that were blank or hardcoded.</p>
+<h2>4. Upload Investment File</h2>
+<p>Any filename is accepted. Keep the Investment schedule&#39;s layout: the detailed work headings are in row 4, and the fixed asset investment total is in <strong>G3</strong>. The supplied default links G3 to G285.</p>
+<p>The upload refreshes the Investment section. Information!C12 links to Investment!G3, and Information!C13 adds the advance to the fixed asset investment. The linked depreciation, financing costs, PNL, NPV, IRR, and payback calculations then recalculate.</p>
+<p>Use the same schedule structure as the supplied file. Uploads with missing required fields, unsupported formulas, or unavailable cross-sheet references show an error and leave the current model active.</p>
+<h2>5. Upload Category Excel and choose a version</h2>
+<p>The default category mix and GP rates come directly from the supplied workbook. Upload categories using these columns:</p>
+<table>
+<thead>
+<tr>
+<th>Column</th>
+<th>Content</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>A</td>
+<td>Category name</td>
+<td>COMPANY GOODS</td>
+</tr>
+<tr>
+<td>B</td>
+<td>Contribution %</td>
+<td>58.5%</td>
+</tr>
+<tr>
+<td>C</td>
+<td>Daily sales</td>
+<td>Calculated by the dashboard</td>
+</tr>
+<tr>
+<td>D</td>
+<td>Category GP%</td>
+<td>19%</td>
+</tr>
+</tbody></table>
+<p>Use real Excel percentages or text ending in <code>%</code>, rather than entering 58.5 as a numeric percentage value. For example, Excel&#39;s underlying value for 58.5% is 0.585.</p>
+<p>The first row should contain Category, Contr %, Daily Sales, GP%. Subsequent rows contain the categories. A final Total row is supported. Additional category rows are supported; the GP formula links to the new total row automatically.</p>
+<p>Category daily sales = contribution × Sales per day. Total GP% = SUMPRODUCT(category GP%, contribution). Contributions are used as uploaded; they are not automatically rescaled. The category section shows the contribution total for review.</p>
+<p>Each accepted upload adds a version: <strong>Default</strong>, <strong>Upload 1</strong>, <strong>Upload 2</strong>, and so on. The newest upload becomes active. Use the dropdown to switch to any saved version. Previous uploads remain available.</p>
+<p>Versions and project inputs are saved <strong>in the same browser for the same dashboard URL</strong>. They are not written back to GitHub and are not shared with other devices or users. Use <strong>Project backup &amp; guidance → Backup project</strong> to keep a portable copy. Use <strong>Restore project backup</strong> on another device or after changing the dashboard address.</p>
+<h2>6. Manual entry</h2>
+<p>Click any Data entry field to change it. Percent fields use percentage points: enter <strong>17.3</strong> for 17.3%, and <strong>6</strong> for 6%.</p>
+<p>For a calculated field, entering a value creates a manual override. Click <strong>Use sheet rule</strong> to return that field to its original formula. Clearing a numeric entry restores its sheet value or formula. A typed zero is retained as zero.</p>
+<p>You can edit manpower quantities and salary rates. Each role&#39;s total remains quantity × salary. Additional expense inputs and WACC are available below the manpower panel.</p>
+<p>The dashboard preserves the workbook&#39;s original conventions:</p>
+<ul>
+<li>Information month sales = daily sales × 30. Monthly PNL sales = daily sales × 365 ÷ 12.</li>
+<li>Total investment in Information = fixed assets + advance. The five-year model&#39;s initial investment also includes security, as in the source.</li>
+<li>Information F22 sums manpower rows 6–18. Security and Cleaner remain separate rows outside that source subtotal. The subtotal is not changed to a new range.</li>
+<li>Rent-increase inputs C21/C22 are recorded in Information. The original five-year rent formulas hardcode the 10% steps in years 3 and 5, rather than referencing those inputs. Those formulas are preserved.</li>
+<li>Yearly H54 uses the original <code>H51--H53</code> formula. It is preserved exactly rather than corrected during the dashboard build.</li>
+<li>The source&#39;s NPV, IRR, ROI, and payback formulas are retained.</li>
+</ul>
+<p>If the inputs make IRR unavailable or a formula divides by zero, the original Excel error is shown in the model and retained in exports. It is not converted to zero. Structural errors such as a missing sheet or unsupported formula must be fixed before export.</p>
+<p><strong>Restore default inputs</strong> restores the supplied model and default signature selections. Uploaded category versions and uploaded signature images remain available for selection.</p>
+<h2>7. Existing Outlet No. within 1 KM</h2>
+<ol>
+<li>Choose the <strong>District</strong>.</li>
+<li>Paste the <strong>Google Map Location</strong>: a Google Maps pin link, a supported short link, coordinates, or an address.</li>
+<li>The check runs after the field changes. Use <strong>Recheck map</strong> to retry.</li>
+</ol>
+<p>The dashboard uses the reference dashboard&#39;s 900 mapped outlet points and the selected-district filter. It calculates straight-line distance using the same Haversine rule and includes outlets at a distance of <strong>1 KM or less</strong>. Results are sorted by distance and show outlet code, outlet name, RHO, Zonal, and distance.</p>
+<p>The parser supports pin coordinates, raw coordinates, Street View positions, and the original link-resolution rules. A named place&#39;s map-view centre is not substituted for its actual pin. Short links and address lookup require the external resolver/map services and internet access.</p>
+<p>A failed lookup clears the automatic result instead of keeping an old count. You can enter a count manually. The status message distinguishes manual entry from an automatic map result.</p>
+<p>The <strong>Include in Excel &amp; PDFs</strong> checkbox starts checked. When unchecked, the count block is omitted from the PDFs and the nearby-outlet worksheet is omitted from the Excel download.</p>
+<p>In the Excel nearby-outlet sheet, <strong>B4</strong> contains resolved coordinates when available. The uploaded Google Map Location and matched outlet details are included there.</p>
+<p>The original resolver configuration is included in <code>map-resolver-config.json</code>. If its Apps Script service later becomes unavailable, paste a full link with coordinates or latitude/longitude, or update that configuration to an equivalent working resolver. Direct coordinates and the bundled outlet-distance calculation do not require the short-link resolver.</p>
+<h2>8. Signatures and approvals</h2>
+<p>All seven reference signatories are available in Data entry:</p>
+<table>
+<thead>
+<tr>
+<th>Position</th>
+<th>Role</th>
+<th>Default name</th>
+<th>Signature enabled by default</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>Prepared by</td>
+<td>Md Aftab Ul Islam</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Sales Given By</td>
+<td>Mr. Mamun</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Opened by</td>
+<td>Mr. Abu Sayem Mohammad Al Azad</td>
+<td>No</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Viewed by</td>
+<td>Salah Uddin Misbah</td>
+<td>No</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Viewed by</td>
+<td>Saiful Alam Rasel</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Viewed by</td>
+<td>Tamal Paul</td>
+<td>No</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Approved By</td>
+<td>Abu Naser</td>
+<td>No</td>
+</tr>
+</tbody></table>
+<p>Signatory 2 follows <strong>Sales Given By</strong> for the name, while its designation remains independently editable. Signatory 3 follows <strong>Opened by</strong> and <strong>Opened by Designation</strong>. Recognized names fill the opened-by designation. Other names can be typed manually.</p>
+<p>If Signatory 3 is enabled, it uses the <strong>exact image selected for Signatory 2</strong>. It does not have an independent image selector. Disabling Signatory 3 removes its signature ink.</p>
+<p>The checkbox controls the image, not the signatory&#39;s name, role, designation, or approval line. The signed PDF keeps all approval positions in the original 4 + 3 arrangement. Saiful&#39;s selected signature appears as the review signature on pages 1 and 2 when enabled. PDF signature boxes retain the reference&#39;s enlarged size.</p>
+<p>Use <strong>Manually change</strong> to override an automatic name/designation link. Use <strong>Use automatic values</strong> to restore it. Upload PNG or JPEG signatures through the signature manager and select them for the appropriate signatory. Uploaded signature images are included in project backups.</p>
+<h2>9. Download reports</h2>
+<h3>Download 3 page pdf</h3>
+<p>The signed PDF contains exactly:</p>
+<ol>
+<li>Information and manpower.</li>
+<li>Monthly PNL.</li>
+<li>Yearly -5yrs PNL and approvals.</li>
+</ol>
+<p>The location, category, and Investment source schedules are excluded. Table text and borders are black on white. PDF fonts are included in the repository and embedded in the document.</p>
+<h3>Management PDF</h3>
+<p>The same three financial pages are exported without signature images or the approval block.</p>
+<h3>Download Excel with Rules</h3>
+<p>The workbook retains the six schedules and the active category&#39;s formulas. It includes an Approval sheet and, when selected, Existing outlets within 1 KM. The download includes cached results and requests recalculation when opened in Excel. Manual overrides are exported as the values entered. Formula-driven fields retain their formulas.</p>
+<p>The Excel download represents the active model. Use the project backup to keep <strong>all</strong> category upload versions and browser settings.</p>
+<h2>10. If something does not load</h2>
+<ul>
+<li>Blank dashboard: confirm that all files were uploaded at the repository root and the website was opened through GitHub Pages.</li>
+<li>Missing signature: confirm that the <code>signs</code> folder and its manifest were uploaded. Select an image and enable the relevant checkbox.</li>
+<li>PDF font error: upload the complete <code>fonts</code> folder.</li>
+<li>Location not resolved: select District, check the link, and use Recheck map. Try raw coordinates if an external service is unavailable.</li>
+<li>Old browser data: restore the required project backup, or use Restore default inputs when you want the supplied baseline.</li>
+<li>Upload rejected: keep the original Location/Investment layout or the Category columns described above. A rejected upload does not replace the active project.</li>
+</ul>
+<h2>Validation completed</h2>
+<p>All 1,189 baseline formulas matched the source workbook&#39;s saved results. Changed uploads, category versions, signature links, map parsing and distance rules, formula exports, and both PDF modes were checked. The signed PDF was rendered and inspected for all three pages. Interactive browser testing and live external map-service checks were not available in the build environment.</p>
+</main></body></html>
